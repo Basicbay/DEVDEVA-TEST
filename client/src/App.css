@@ -1,0 +1,12 @@
+th,td{
+  padding: 16px;
+}
+
+input:focus, select:focus{
+outline-color: rgb(108, 108, 255);
+
+}
+
+label{
+color: rgb(151, 151, 151);
+}
