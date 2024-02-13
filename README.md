@@ -1,11 +1,11 @@
 
-**server** 
-cd server \
-npm install \
-npm start \
+**server**\
+cd server\
+npm install\
+npm start 
 
-**client**
-cd client
-npm install
+**client**\
+cd client\
+npm install\
 npm run dev
 
