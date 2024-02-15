@@ -4,140 +4,122 @@ const dbo = require("../db/conn");
 const ObjectId = require("mongodb").ObjectId;
 const multer = require("multer");
 
-// Set up Multer storage
+//กำหนดตัวแปรสำหรับการแบ่งหน้าเพจ
+const PAGE_DEFAULT = 1;
+const LIMIT_DEFAULT = 3;
+
+//config หน่วยเก็บข้อมูลของ Multer
 const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "public/uploads"); // Destination folder for uploaded files
+  destination: (req, file, cb) => {
+    cb(null, "public/uploads");
   },
-  filename: function (req, file, cb) {
-    cb(null, Date.now() + '-' + file.originalname); // File name on server
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + '-' + file.originalname);
   },
 });
 
-const upload = multer({ storage: storage });
+const upload = multer({ storage });
 
-userRoutes.route("/user").get(function (req, res) {
-  let db_connect = dbo.getDb("usersDB");
-  const page = parseInt(req.query.page) || 1; // Default to page 1 if not provided
-  const limit = 3; // Default to 3 items per page
-
-  // Calculate skip value based on page and limit
-  const skip = (page - 1) * limit;
-
-  db_connect
-    .collection("users")
-    .find({})
-    .skip(skip)
-    .limit(limit)
-    .toArray(function (err, result) {
-      if (err) throw err;
-      res.json(result);
-    });
-});
-
-userRoutes.route("/totalusers").get(function (req, res) {
-  let db_connect = dbo.getDb("usersDB");
-  db_connect
-    .collection("users")
-    .countDocuments()
-    .then(function (count) {
-      res.json({ count });
-    })
-    .catch(function (err) {
-      console.error(err);
-      res.status(500).send('Internal Server Error');
-    });
-});
-
-// This section will help you get a single user by id
-userRoutes.route("/user/:id").get(function (req, res) {
-  let db_connect = dbo.getDb();
-  let myquery = { _id: ObjectId(req.params.id) };
-  db_connect
-    .collection("users")
-    .findOne(myquery, function (err, result) {
-      if (err) throw err;
-      res.json(result);
-    });
-});
-
-// This section will help you create a new user.
-userRoutes.route("/user/add").post(upload.single("image"), function (req, response) {
+// get user ด้วยการแบ่งหน้าเพจ
+userRoutes.route("/user").get(async (req, res) => {
   try {
-    let filename = "";
-    if (req.file) {
-      filename = req.file.filename;
-      console.log('image', filename);
-    }
-    let db_connect = dbo.getDb();
-    let myobj = {
+    const db = dbo.getDb("usersDB");
+    const page = parseInt(req.query.page) || PAGE_DEFAULT;
+    const limit = LIMIT_DEFAULT;
+    const skip = (page - 1) * limit;
+
+    const users = await db.collection("users")
+      .find({})
+      .skip(skip)
+      .limit(limit)
+      .toArray();
+      
+    res.json(users);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
+//get จำนวนของ user ทั้งหมด
+userRoutes.route("/totalusers").get(async (req, res) => {
+  try {
+    const db = dbo.getDb("usersDB");
+    const count = await db.collection("users").countDocuments();
+    res.json({ count });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
+//get user คนเดียวด้วย id
+userRoutes.route("/user/:id").get(async (req, res) => {
+  try {
+    const db = dbo.getDb();
+    const myquery = { _id: ObjectId(req.params.id) };
+    const user = await db.collection("users").findOne(myquery);
+    res.json(user);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
+//post สร้าง user ใหม่
+userRoutes.route("/user/add").post(upload.single("image"), async (req, res) => {
+  try {
+    const filename = req.file ? req.file.filename : "";
+    const db = dbo.getDb();
+    const myobj = {
       fname: req.body.fname,
       lname: req.body.lname,
       gender: req.body.gender,
       birthday: req.body.birthday,
       image: filename,
     };
-    db_connect.collection("users").insertOne(myobj, function (err, res) {
-      if (err) {
-        throw err;
-      }
-      console.log("1 document created");
-      response.json(res);
-    });
+    await db.collection("users").insertOne(myobj);
+    res.json({ message: "User created successfully" });
   } catch (error) {
-    console.error('Error:', error);
-    response.status(500).json({ error: error.message });
+    console.error(error);
+    res.status(500).json({ error: error.message });
   }
 });
 
-// This section will help you update a user by id.
-userRoutes.route("/update/:id").post(upload.single("image"), function (req, response) {
+//post อัพเดดการเปลี่ยนแปลงของ user ด้วย id
+userRoutes.route("/update/:id").post(upload.single("image"), async (req, res) => {
   try {
-    let filename = req.body.image || null; // Set filename to null if no image provided
-
-    if (req.file) {
-      filename = req.file.filename;
-    }
-
-    let db_connect = dbo.getDb();
-    let myquery = { _id: ObjectId(req.params.id) };
-    let newvalues = {
+    const filename = req.file ? req.file.filename : null;
+    const db = dbo.getDb();
+    const myquery = { _id: ObjectId(req.params.id) };
+    const newvalues = {
       $set: {
         fname: req.body.fname,
         lname: req.body.lname,
         gender: req.body.gender,
         birthday: req.body.birthday,
+        image: filename || req.body.image,
       },
     };
-
-    // Only add the image field to newvalues if filename is not null
-    if (filename !== null) {
-      newvalues.$set.image = filename;
-    }
-
-    db_connect.collection("users").updateOne(myquery, newvalues, function (err, res) {
-      if (err) {
-        throw err;
-      }
-      console.log("1 document updated");
-      response.json({ message: "User updated successfully" });
-    });
+    await db.collection("users").updateOne(myquery, newvalues);
+    res.json({ message: "User updated successfully" });
   } catch (error) {
-    console.error('Error:', error);
-    response.status(500).json({ error: error.message });
+    console.error(error);
+    res.status(500).json({ error: error.message });
   }
 });
 
-// This section will help you delete a user
-userRoutes.route("/:id").delete((req, response) => {
-  let db_connect = dbo.getDb();
-  let myquery = { _id: ObjectId(req.params.id) };
-
-  db_connect.collection("users").deleteOne(myquery, function (err, obj) {
-    if (err) throw err;
-    console.log("1 document deleted");
-    response.json(obj);
-  });
+// delete user ด้วย id
+userRoutes.route("/:id").delete(async (req, res) => {
+  try {
+    const db = dbo.getDb();
+    const myquery = { _id: ObjectId(req.params.id) };
+    await db.collection("users").deleteOne(myquery);
+    res.json({ message: "User deleted successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: error.message });
+  }
 });
 
 module.exports = userRoutes;

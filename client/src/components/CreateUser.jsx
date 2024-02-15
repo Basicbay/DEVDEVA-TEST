@@ -1,82 +1,74 @@
-import React, { useState, useRef, ChangeEvent } from 'react'
-import { Link, NavLink } from 'react-router-dom'
-import { useNavigate } from "react-router";
-import Swal from 'sweetalert2'
-import avatar from './image/avatar.png'
-
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+import Swal from 'sweetalert2';
+import avatar from './image/avatar.png';
+import { useNavigate } from 'react-router';
 
 function CreateUser() {
-
-    const Alert = (formData) => {
-        Swal.fire({
-            icon: "question",
-            title: "Do you want to create the user ?",
-            showCancelButton: true,
-            confirmButtonText: "Create"
-        }).then(async (result) => {
-            /* Read more about isConfirmed, isDenied below */
-            if (result.isConfirmed) {
-
-                await fetch("http://localhost:5000/user/add", {
-                    method: "POST",
-                    body: formData,
-                });
-                setForm({ fname: "", lname: "", gender: "", birthday: "", image: "" });
-                Swal.fire("Created!", "", "success");
-                navigate("/");
-            }
-        });
-    }
-
-    const [form, setForm] = useState({
-        fname: "",
-        lname: "",
-        gender: "",
-        birthday: "",
-        image: "",
+    const navigate = useNavigate(); // hook การนำทาง
+    const [form, setForm] = useState({  //state เพื่อจัดการข้อมูลของ form
+        fname: '',
+        lname: '',
+        gender: '',
+        birthday: '',
+        image: '',
     });
 
-    const navigate = useNavigate();
-
-    // These methods will update the state properties.
-    function updateForm(value) {
-        return setForm((prev) => {
-            return { ...prev, ...value };
+    //ฟังก์ชั่นแจ้งเตือนเพื่อยืนยันการ Create user
+    const Alert = async (formData) => {
+        const result = await Swal.fire({    //แสดงกล่อง alert
+            icon: 'question',
+            title: 'Do you want to create the user ?',
+            showCancelButton: true,
+            confirmButtonText: 'Create'
         });
-    }
 
-    //Delete Image
+        if (result.isConfirmed) {   // หากยืนยันกล่อง alert
+            await fetch('http://localhost:5000/user/add', {     //post แบบฟอร์มไปยัง server
+                method: 'POST',
+                body: formData,
+            });
+            setForm({ fname: '', lname: '', gender: '', birthday: '', image: '' }); //รีเซ็ต form เป็นค่าว่าง
+            Swal.fire('Created!', '', 'success');   //alert สร้าง user สำเร็จ
+            navigate('/');  //นำทางไปยังหน้าแรก
+        }
+    };
+
+    //ฟังก์ชั่นอัพเดด state form ฟอร์ม
+    const updateForm = (value) => {
+        setForm((prev) => ({ ...prev, ...value }));
+    };
+
+    //ฟังก์ชั่นลบรูปภาพโปรไฟล์
     const deleteImage = () => {
         updateForm({ image: null });
     };
 
-    // This function will handle the submission.
-    async function onSubmit(e) {
-        console.log(form.image)
+    // ฟังก์ชั่น ยืนยันการส่ง form
+    const onSubmit = async (e) => {
         e.preventDefault();
-        // When a post request is sent to the create url, we'll add a new record to the database.
-        const formData = new FormData();
+        const formData = new FormData();    //สร้าง object เพื่อส่งฟอร์มเป็น data เนื่องจากมีข้อมูลของภาพ
         formData.append('fname', form.fname);
         formData.append('lname', form.lname);
         formData.append('gender', form.gender);
         formData.append('birthday', form.birthday);
-        formData.append('image', form.image); // Append the image file
-
-        Alert(formData);
-
-
-
-    }
+        formData.append('image', form.image);
+        Alert(formData);    //ไปยังฟังก์ชั่น Alert
+    };
 
     return (
-        <div className=''>
-
-            <div className='relative flex h-20 px-10 items-center justify-between'>
-                <div className='font-medium text-xl text-slate-400'>Create new User</div>
-                <Link to={`/create`}><button className='rounded-lg  text-white px-8 py-2' style={{ background: '#008FFF' }}>Add +</button></Link>
+        <div className="">
+            <div className="relative flex h-20 px-10 items-center justify-between">
+                <div className="font-medium text-xl text-slate-400">Create new User</div>
+                <Link to="/create">
+                    <button className="rounded-lg  text-white px-8 py-2" style={{ background: '#008FFF' }}>
+                        Add +
+                    </button>
+                </Link>
             </div>
 
-            <form onSubmit={onSubmit} className=' m-auto max-w-6xl md:px-20 xl:px-0 '>
+            <form onSubmit={onSubmit} className="m-auto max-w-6xl md:px-20 xl:px-0">
+
                 <div className=' grid xl:grid-cols-3 gap-10 xl:gap-5 '>
 
                     <div className='grid gap-4 text-center items-center '>
@@ -92,7 +84,7 @@ function CreateUser() {
                                     onChange={(e) => {
                                         const file = e.target.files && e.target.files[0];
                                         if (file) {
-                                            updateForm({ image: file }); // Only updating with file name
+                                            updateForm({ image: file }); // // update รุปภาพที่ input มา
                                         }
                                     }}
                                 />
@@ -169,7 +161,7 @@ function CreateUser() {
 
             </form>
         </div>
-    )
+    );
 }
 
-export default CreateUser
+export default CreateUser;

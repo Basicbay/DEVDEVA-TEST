@@ -3,67 +3,61 @@ import { Link } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import avatar from './image/avatar.png';
 
-const User = (props) => (
+const User = ({ user, handleDeleteConfirmation }) => (
   <tr>
     <td className='pl-10 py-3'>
-      {props.user.image && props.user.image !== 'null' ? (
-        <img
-          className='rounded-full'
-          src={`http://localhost:5000/uploads/${props.user.image}`}
-          style={{ maxWidth: '60px', maxHeight: '60px' }}
-          alt="User Avatar"
-        />
-      ) : (
-        <img
-          className="rounded-full"
-          src={avatar}
-          style={{ maxWidth: '60px', maxHeight: '60px' }}
-          alt="Default Avatar"
-        />
-      )}
+      <img
+        className='rounded-full'
+        src={user.image && user.image !== 'null' ? `http://localhost:5000/uploads/${user.image}` : avatar}
+        style={{ maxWidth: '60px', maxHeight: '60px' }}
+        alt={user.image ? "User Avatar" : "Default Avatar"}
+      />
     </td>
-    <td>{props.user.fname}</td>
-    <td>{props.user.lname}</td>
-    <td>{props.user.gender}</td>
-    <td>{props.user.birthday}</td>
-    <td className='p-0' >
+    <td>{user.fname}</td>
+    <td>{user.lname}</td>
+    <td>{user.gender}</td>
+    <td>{user.birthday}</td>
+    <td className='p-0'>
       <div className='flex gap-2 justify-end'>
-        <Link to={`/edit/${props.user._id}`}><button className=' text-white w-20 py-2' style={{ background: '#FFC900' }}>Edit</button></Link>
-        <button className=' text-white w-20 py-2' style={{ background: '#FF0000' }} onClick={() => props.handleDeleteConfirmation(props.user._id)}>Delete</button>
+        <Link to={`/edit/${user._id}`}>
+          <button className='text-white w-20 py-2' style={{ background: '#FFC900' }}>Edit</button>
+        </Link>
+        <button className='text-white w-20 py-2' style={{ background: '#FF0000' }} onClick={() => handleDeleteConfirmation(user._id)}>Delete</button>
       </div>
     </td>
   </tr>
 );
 
 function UserList() {
-  const [users, setUsers] = useState([]);
-  const [isLoaded, setIsLoaded] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [users, setUsers] = useState([]); // state สำหรับจัดเก็บผู้ใช้
+  const [currentPage, setCurrentPage] = useState(1); // state สำหรับระบุหน้าปัจจุบัน
 
-  async function getUsers(page) {
-    const response = await fetch(`http://localhost:5000/user/?page=${currentPage}`);
-    if (!response.ok) {
-      const message = `An error occurred: ${response.statusText}`;
-      window.alert(message);
-      return;
-    }
-    const users = await response.json();
-    setUsers(users);
-    setIsLoaded(true);
-  }
-
+  //ฟังก์ชั่น Fetch ข้อมูลผู้ใช้จาก server
   useEffect(() => {
-    getUsers(currentPage);
+    async function getUsers() {
+      try {
+        const response = await fetch(`http://localhost:5000/user/?page=${currentPage}`);
+        if (!response.ok) {
+          throw new Error(`An error occurred: ${response.statusText}`);
+        }
+        const usersData = await response.json();
+        setUsers(usersData);
+      } catch (error) {
+        window.alert(error.message);
+      }
+    }
+    getUsers(); //Fetch ข้อมูลผู้ใช้เมื่อหน้าปัจจุบันมีการเปลี่ยนแปลง
   }, [currentPage]);
 
-  async function deleteUser(id) {
+  //ฟังก์ชั่นลบ user 
+  const deleteUser = async (id) => {
     await fetch(`http://localhost:5000/${id}`, {
       method: "DELETE"
     });
-    const newUsers = users.filter((el) => el._id !== id);
-    setUsers(newUsers);
-  }
+    setUsers(users.filter((el) => el._id !== id)); //กรองผู้ใช้ที่ถูกลบออกจาก state
+  };
 
+  //ฟังก์ชั่นแจ้งเตือนเมื่อกดปุ่มลบโดย และเรียกใช้ฟังก์ชั่น deleteUser
   const handleDeleteConfirmation = (id) => {
     Swal.fire({
       title: "Are you sure?",
@@ -74,9 +68,9 @@ function UserList() {
       cancelButtonColor: "#818181",
       confirmButtonText: "Yes, delete it!"
     }).then((result) => {
-      if (result.isConfirmed) {
-        deleteUser(id);
-        Swal.fire({
+      if (result.isConfirmed) { //หากยืนยันการลบเป็นจริง
+        deleteUser(id); //ไปยังฟังก์ชั่น ลบ user
+        Swal.fire({ //แสดงข้อความหลังทำการลบ
           title: "Deleted!",
           text: "Your file has been deleted.",
           icon: "success"
@@ -85,30 +79,23 @@ function UserList() {
     });
   };
 
-  function UsersList() {
-    return users.map((user) => (
-      <User
-        user={user}
-        handleDeleteConfirmation={() => handleDeleteConfirmation(user._id)}
-        key={user._id}
-      />
-    ));
-  }
-
+  //ฟังก์ชั่นในการจัดการเปลี่ยนหน้าเพจ
   const handlePageChange = (newPage) => {
     setCurrentPage(newPage);
   };
 
   return (
-    <div className=''>
+    <div>
       <div className='relative flex h-20 px-10 items-center justify-between'>
         <div className='font-medium text-xl text-slate-400'>User List</div>
-        <Link to={`/create`}><button className='rounded-lg  text-white px-8 py-2' style={{ background: '#008FFF' }}>Add +</button></Link>
+        <Link to={`/create`}>
+          <button className='rounded-lg text-white px-8 py-2' style={{ background: '#008FFF' }}>Add +</button>
+        </Link>
       </div>
 
       <div className='mt-10 md:mx-10 xl:mx-auto m-auto max-w-6xl text-justify' style={{ overflowX: 'auto' }}>
-        <table className=" w-full whitespace-nowrap ">
-          <thead className=' bg-neutral-200'>
+        <table className="w-full whitespace-nowrap">
+          <thead className='bg-neutral-200'>
             <tr>
               <th>Profile Picture</th>
               <th>First name</th>
@@ -118,16 +105,22 @@ function UserList() {
               <th className='text-center'>Action</th>
             </tr>
           </thead>
-          <tbody >
-            {UsersList()}
+          <tbody>
+            {users.map((user) => (
+              <User
+                key={user._id}
+                user={user}
+                handleDeleteConfirmation={() => handleDeleteConfirmation(user._id)}
+              />
+            ))}
           </tbody>
         </table>
       </div>
-      <div className="pagination mt-5 flex justify-center lg:justify-end px-10 xl:px-28 gap-10 text-4xl text-slate-500 ">
+
+      <div className="pagination mt-5 flex justify-center self-center lg:justify-end px-10 xl:px-28 gap-10 text-4xl text-slate-500">
         <button onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage <= 1}>&lsaquo;</button>
+        <p className=' text-base self-center pt-2'>page {currentPage}</p>
         <button onClick={() => handlePageChange(currentPage + 1)}>&rsaquo;</button>
-      </div>
-      <div>
       </div>
     </div>
   );

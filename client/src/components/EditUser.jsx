@@ -1,52 +1,27 @@
-import React, { useState, useEffect } from 'react'
-import { Link, useNavigate, useParams } from 'react-router-dom'
-import Swal from 'sweetalert2'
-import avatar from './image/avatar.png'
-
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import Swal from 'sweetalert2';
+import avatar from './image/avatar.png';
 
 function EditUser() {
-
-    const Alert = (formData) => {
-        Swal.fire({
-            icon: "question",
-            title: "Do you want to save the changes?",
-            showCancelButton: true,
-            confirmButtonText: "Save"
-        }).then(async (result) => {
-            /* Read more about isConfirmed, isDenied below */
-            if (result.isConfirmed) {
-                // This will send a post request to update the data in the database.
-                await fetch(`http://localhost:5000/update/${params.id}`, {
-                    method: "POST",
-                    body: formData,
-                });
-                Swal.fire("Saved!", "", "success");
-                navigate('/');
-            }
-        });
-    }
-
-    const [form, setForm] = useState({
+    const [form, setForm] = useState({ //state เพื่อจัดการข้อมูลของ form
         fname: "",
         lname: "",
         gender: "",
         birthday: "",
         image: "",
     });
+    const [previewUrl, setPreviewUrl] = useState(''); // state Preview รูปภาพ
+    const params = useParams(); // hook parameter
+    const navigate = useNavigate(); // hook การนำทาง
 
-    // Add a new state variable to hold the preview URL
-    const [previewUrl, setPreviewUrl] = useState('');
-    const params = useParams();
-    const navigate = useNavigate();
-
-
+    //fetch ข้อมูลผู้ใช้ตาม parameter id ที่ให้มา
     useEffect(() => {
         async function fetchData() {
             const id = params.id?.toString();
             const response = await fetch(`http://localhost:5000/user/${params.id?.toString()}`);
             if (!response.ok) {
-                const message = `An error has occurred: ${response.statusText}`;
-                window.alert(message);
+                window.alert(`An error has occurred: ${response.statusText}`);
                 return;
             }
             const user = await response.json();
@@ -58,46 +33,62 @@ function EditUser() {
             setForm(user);
         }
         fetchData();
-        return;
     }, [params.id, navigate]);
 
-    // These methods will update the state properties.
+    //ฟังก์ชั่นอัพเดด state form ฟอร์ม
     function updateForm(value) {
-        return setForm((prev) => {
-            return { ...prev, ...value };
-        });
+        setForm(prev => ({ ...prev, ...value }));
     }
 
-    //Delete Image
+    //ฟังก์ชั่นลบรูปภาพโปรไฟล์ จากฟอร์ม
     const deleteImage = () => {
         updateForm({ image: null });
     };
 
-    async function onSubmit(e) {
+    // ฟังก์ชั่น ยืนยันการส่ง form
+    const handleSubmit = async (e) => {
         e.preventDefault();
         const formData = new FormData();
         formData.append('fname', form.fname);
         formData.append('lname', form.lname);
         formData.append('gender', form.gender);
         formData.append('birthday', form.birthday);
-        formData.append('image', form.image); // Append the image file
+        formData.append('image', form.image);
 
+        showAlert(formData); //ไปยังฟังก์ชั่น Alert
+    }
 
-        Alert(formData);
-        //navigate('/');
+    //ฟังก์ชั่น Alert ยืนยันการเปลี่ยนแปลงฟอร์ม
+    const showAlert = (formData) => {
+        Swal.fire({
+            icon: "question",
+            title: "Do you want to save the changes?",
+            showCancelButton: true,
+            confirmButtonText: "Save"
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                try {
+                    await fetch(`http://localhost:5000/update/${params.id}`, {
+                        method: "POST",
+                        body: formData,
+                    });
+                    Swal.fire("Saved!", "", "success");
+                    navigate('/');
+                } catch (error) {
+                    console.error('Error updating user:', error);
+                }
+            }
+        });
     }
 
     return (
         <div className=''>
-
             <div className='relative flex h-20 px-10 items-center justify-between'>
                 <div className='font-medium text-xl text-slate-400'>Edit User</div>
                 <Link to={`/create`}><button className='rounded-lg  text-white px-8 py-2' style={{ background: '#008FFF' }}>Add +</button></Link>
             </div>
-
-            <form onSubmit={onSubmit} className=' m-auto max-w-6xl md:px-20 xl:px-0'>
+            <form onSubmit={handleSubmit} className=' m-auto max-w-6xl md:px-20 xl:px-0'>
                 <div className=' grid xl:grid-cols-3 gap-10 xl:gap-5  '>
-
                     <div className='grid gap-4 text-center '>
                         {previewUrl ? (
                             <img className="w-44 h-44 rounded-full m-auto" src={previewUrl} alt="" />
@@ -113,21 +104,18 @@ function EditUser() {
                                     onChange={(e) => {
                                         const file = e.target.files && e.target.files[0];
                                         if (file) {
-                                            // Update the preview URL
-                                            setPreviewUrl(URL.createObjectURL(file));
-                                            // Update the form state with the selected file
-                                            updateForm({ image: file });
+                                            setPreviewUrl(URL.createObjectURL(file)); //preview รูปภาพ
+                                            updateForm({ image: file }); // update รุปภาพที่ input มา
                                         }
                                     }}
                                 />
                             </label>
                         </div>
-                        <div><button onClick={deleteImage} type='button' className='rounded-lg text-white text-sm px-5 py-2' style={{ background: '#FF0000' }}>Delete Picture</button></div>
-
+                        <div>
+                            <button onClick={deleteImage} type='button' className='rounded-lg text-white text-sm px-5 py-2' style={{ background: '#FF0000' }}>Delete Picture</button>
+                        </div>
                     </div>
-
                     <div className='grid xl:grid-cols-2 xl:col-span-2 gap-5 place-content-center text-black    '>
-
                         <div className='flex flex-col'>
                             <label className="p-1  ">First Name</label>
                             <input
@@ -140,7 +128,6 @@ function EditUser() {
                                 required
                             />
                         </div>
-
                         <div className='flex flex-col'>
                             <label className="p-1  ">Last Name</label>
                             <input
@@ -153,7 +140,6 @@ function EditUser() {
                                 required
                             />
                         </div>
-
                         <div className='flex flex-col'>
                             <label className="p-1  ">Gender</label>
                             <select
@@ -169,7 +155,6 @@ function EditUser() {
                                 <option value="Female">Female</option>
                             </select>
                         </div>
-
                         <div className='flex flex-col'>
                             <label className="p-1  ">Birthday</label>
                             <input
@@ -182,18 +167,15 @@ function EditUser() {
                                 required
                             />
                         </div>
-
                     </div>
                 </div>
-
                 <div className='flex gap-5 my-16 justify-center xl:justify-end '>
                     <Link to={`/`}><button className='rounded-lg text-white w-32  py-1' style={{ background: '#9C9C9C' }}>CANCEL</button></Link>
                     <button type='submit' className='rounded-lg text-white w-32  py-1' style={{ background: '#06DC2D' }}>SAVE</button>
                 </div>
-
             </form>
         </div>
     )
 }
 
-export default EditUser
+export default EditUser;
