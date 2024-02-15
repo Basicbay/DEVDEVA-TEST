@@ -7,11 +7,12 @@ import avatar from './image/avatar.png'
 
 function CreateUser() {
 
-    const Alert = (formData ) => {
+    const Alert = (formData) => {
         Swal.fire({
-            title: "Do you want to save the changes?",
+            icon: "question",
+            title: "Do you want to create the user ?",
             showCancelButton: true,
-            confirmButtonText: "Save"
+            confirmButtonText: "Create"
         }).then(async (result) => {
             /* Read more about isConfirmed, isDenied below */
             if (result.isConfirmed) {
@@ -21,7 +22,7 @@ function CreateUser() {
                     body: formData,
                 });
                 setForm({ fname: "", lname: "", gender: "", birthday: "", image: "" });
-                Swal.fire("Saved!", "", "success");
+                Swal.fire("Created!", "", "success");
                 navigate("/");
             }
         });
@@ -38,7 +39,7 @@ function CreateUser() {
     const navigate = useNavigate();
 
     // These methods will update the state properties.
-    function updateForm(value ) {
+    function updateForm(value) {
         return setForm((prev) => {
             return { ...prev, ...value };
         });
@@ -50,7 +51,7 @@ function CreateUser() {
     };
 
     // This function will handle the submission.
-    async function onSubmit(e ) {
+    async function onSubmit(e) {
         console.log(form.image)
         e.preventDefault();
         // When a post request is sent to the create url, we'll add a new record to the database.
@@ -63,7 +64,7 @@ function CreateUser() {
 
         Alert(formData);
 
-        
+
 
     }
 

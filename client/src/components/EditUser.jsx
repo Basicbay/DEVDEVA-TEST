@@ -8,6 +8,7 @@ function EditUser() {
 
     const Alert = (formData) => {
         Swal.fire({
+            icon: "question",
             title: "Do you want to save the changes?",
             showCancelButton: true,
             confirmButtonText: "Save"
