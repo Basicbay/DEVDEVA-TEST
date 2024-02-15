@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import avatar from './image/avatar.png';
 
+//ฟังก์ขั่นสำหรับการแสดง user ใน table
 const User = ({ user, handleDeleteConfirmation }) => (
   <tr>
     <td className='pl-10 py-3'>
@@ -122,6 +123,7 @@ function UserList() {
         <p className=' text-base self-center pt-2'>page {currentPage}</p>
         <button onClick={() => handlePageChange(currentPage + 1)}>&rsaquo;</button>
       </div>
+      
     </div>
   );
 }
