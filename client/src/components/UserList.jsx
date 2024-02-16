@@ -151,7 +151,7 @@ function UserList() {
       </div>
 
       <div className="pagination mt-5 flex justify-center self-center lg:justify-end px-10 xl:px-28 gap-5 text-slate-500">
-      <p>Total users {totalUsers}</p>
+      <p className='hidden'>Total users {totalUsers}</p>
         <button onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage <= 1}>&lt;</button>
         {generatePageNumbers().map(pageNumber => (
           <button key={pageNumber} onClick={() => handlePageChange(pageNumber)}>{pageNumber}</button>
