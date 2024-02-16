@@ -31,30 +31,49 @@ const User = ({ user, handleDeleteConfirmation }) => (
 
 function UserList() {
   const [users, setUsers] = useState([]); // state สำหรับจัดเก็บผู้ใช้
+  const [totalUsers, setTotalUsers] = useState(0);
   const [currentPage, setCurrentPage] = useState(1); // state สำหรับระบุหน้าปัจจุบัน
+  const usersPerPage = 3; // จำนวน user ในหน้าเพจ
 
   //ฟังก์ชั่น Fetch ข้อมูลผู้ใช้จาก server
-  useEffect(() => {
-    async function getUsers() {
-      try {
-        const response = await fetch(`http://localhost:5000/user/?page=${currentPage}`);
-        if (!response.ok) {
-          throw new Error(`An error occurred: ${response.statusText}`);
-        }
-        const usersData = await response.json();
-        setUsers(usersData);
-      } catch (error) {
-        window.alert(error.message);
+
+  async function getUsers() {
+    try {
+      const response = await fetch(`http://localhost:5000/user/?page=${currentPage}`);
+      if (!response.ok) {
+        throw new Error(`An error occurred: ${response.statusText}`);
       }
+      const usersData = await response.json();
+      setUsers(usersData);
+    } catch (error) {
+      window.alert(error.message);
     }
-    getUsers(); //Fetch ข้อมูลผู้ใช้เมื่อหน้าปัจจุบันมีการเปลี่ยนแปลง
+  }
+
+  //ฟังก์ชั่น fetch จำนวนผู้ใช้จาก server
+  const fetchTotalUsers = async () => {
+    try {
+      const response = await fetch('http://localhost:5000/totalusers');
+      const data = await response.json();
+      setTotalUsers(data.count);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+
+  useEffect(() => {
+    fetchTotalUsers(); //fetch จำนวนผู้ใช้ เมื่อหน้าปัจจุบันมีการเปลี่ยนแปลง
+    getUsers(); //Fetch ข้อมูลผู้ใช้ เมื่อหน้าปัจจุบันมีการเปลี่ยนแปลง
   }, [currentPage]);
+
 
   //ฟังก์ชั่นลบ user 
   const deleteUser = async (id) => {
     await fetch(`http://localhost:5000/${id}`, {
       method: "DELETE"
     });
+    setTotalUsers(prevTotalUsers => prevTotalUsers - 1); // อัพเดทจำนวนผู้ใช้หลังจากลบผู้ใช้แล้ว
     setUsers(users.filter((el) => el._id !== id)); //กรองผู้ใช้ที่ถูกลบออกจาก state
   };
 
@@ -83,6 +102,19 @@ function UserList() {
   //ฟังก์ชั่นในการจัดการเปลี่ยนหน้าเพจ
   const handlePageChange = (newPage) => {
     setCurrentPage(newPage);
+  };
+
+  // ฟังก์ชั่นคำนวณจำนวนหน้าทั้งหมด
+  const totalPages = Math.ceil(totalUsers / usersPerPage);
+
+  // ฟังก์ชั่นในการสร้างหมายเลขหน้า
+  const generatePageNumbers = () => {
+    const totalPages = Math.ceil(totalUsers / usersPerPage);
+    const pageNumbers = [];
+    for (let i = 1; i <= totalPages; i++) {
+      pageNumbers.push(i);
+    }
+    return pageNumbers;
   };
 
   return (
@@ -118,12 +150,15 @@ function UserList() {
         </table>
       </div>
 
-      <div className="pagination mt-5 flex justify-center self-center lg:justify-end px-10 xl:px-28 gap-10 text-4xl text-slate-500">
-        <button onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage <= 1}>&lsaquo;</button>
-        <p className=' text-base self-center pt-2'>page {currentPage}</p>
-        <button onClick={() => handlePageChange(currentPage + 1)}>&rsaquo;</button>
+      <div className="pagination mt-5 flex justify-center self-center lg:justify-end px-10 xl:px-28 gap-5 text-slate-500">
+      <p>Total users {totalUsers}</p>
+        <button onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage <= 1}>&lt;</button>
+        {generatePageNumbers().map(pageNumber => (
+          <button key={pageNumber} onClick={() => handlePageChange(pageNumber)}>{pageNumber}</button>
+        ))}
+        <button onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage >= totalPages}>&gt;</button>
       </div>
-      
+
     </div>
   );
 }
