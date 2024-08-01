@@ -3,7 +3,7 @@
 
 ## Tech stack
 `Vite` `HTML` `CSS` `JavaScript` `React` `Tailwind CSS`
-\**Database**\
+**\Database**\
  `Node JS` `Mongo DB` `Express`
 
 ## Installation
