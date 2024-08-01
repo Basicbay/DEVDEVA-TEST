@@ -1,9 +1,9 @@
 # Users Management 🗃
 **URL:** https://user-management-az98.onrender.com/
 
-## Tech stack
+## Client
 `Vite` `HTML` `CSS` `Typescript` `React`
-## Database
+## Server
 `Mongo DB` `Express` `Node JS`
 
 ## Installation
