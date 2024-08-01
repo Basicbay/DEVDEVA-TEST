@@ -9,7 +9,7 @@ Client
 
 Server
 
- `Node JS` `Mongo DB` `Express`
+ `Node JS` `Mongo DB` `Express`  `REST API`
 
 ## Installation
 ```console
