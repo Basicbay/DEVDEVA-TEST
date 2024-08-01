@@ -1,8 +1,10 @@
 # Users Management 🗃
-**URL:** https://nattagrit.netlify.app/
+**URL:** https://user-management-az98.onrender.com/
 
 ## Tech stack
-`Vite` `Bun` `HTML` `CSS` `Typescript` `React` `Tailwind CSS` `Daisy UI`
+`Vite` `HTML` `CSS` `Typescript` `React`
+## Database
+`Mongo DB` `Express` `Node JS`
 
 ## Installation
 ```console
