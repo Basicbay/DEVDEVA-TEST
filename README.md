@@ -2,34 +2,31 @@
 **URL:** https://user-management-az98.onrender.com/
 
 ## Client
-`Vite` `HTML` `CSS` `Typescript` `React`
+`Vite` `HTML` `CSS` `JavaScript` `React` `Tailwind CSS`
 ## Server
-`Mongo DB` `Express` `Node JS`
+ `Node JS` `Mongo DB` `Express`
 
 ## Installation
 ```console
-git clone https://github.com/Basicbay/personal-portfolio.git
+git clone https://github.com/Basicbay/users-management.git
 ```
-```console
-cd personal-portfolio
-```
-```console
-bun install
-```
-```console
-bun dev
-```
-
-
-
-
-**server**\
-cd server\
-npm install\
-npm start 
-
 **client**\
-cd client\
-npm install\
+```console
+cd client
+```
+```console
+npm install
+```
+```console
 npm run dev
-
+```
+**server**\
+```console
+cd server
+```
+```console
+npm install
+```
+```console
+npm start
+```
