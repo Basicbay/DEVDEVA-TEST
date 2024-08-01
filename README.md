@@ -15,7 +15,9 @@ Server
 ```console
 git clone https://github.com/Basicbay/users-management.git
 ```
-## Client
+
+Client
+
 ```console
 cd client
 ```
@@ -25,7 +27,9 @@ npm install
 ```console
 npm run dev
 ```
-## Server
+
+Server
+
 ```console
 cd server
 ```
