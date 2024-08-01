@@ -2,9 +2,13 @@
 **URL:** https://user-management-az98.onrender.com/
 
 ## Tech stack
+
 Client
+
 `Vite` `HTML` `CSS` `JavaScript` `React` `Tailwind CSS`
+
 Server
+
  `Node JS` `Mongo DB` `Express`
 
 ## Installation
