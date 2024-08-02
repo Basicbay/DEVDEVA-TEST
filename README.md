@@ -1,5 +1,5 @@
 # Users Management 🗃
-**URL:** https://user-management-az98.onrender.com/
+**URL** https://user-management-az98.onrender.com/
 
 ## Tech stack
 
