@@ -1,11 +1,41 @@
+# Users Management 🗃
+**URL** https://user-management-az98.onrender.com/
 
-**server**\
-cd server\
-npm install\
-npm start 
+## Tech stack
 
-**client**\
-cd client\
-npm install\
+Client
+
+`Vite` `HTML` `CSS` `JavaScript` `React` `Tailwind CSS`
+
+Server
+
+ `Node JS` `Mongo DB` `Express JS` `REST API` `CRUD`
+
+## Installation
+```console
+git clone https://github.com/Basicbay/users-management.git
+```
+
+Client
+
+```console
+cd client
+```
+```console
+npm install
+```
+```console
 npm run dev
+```
 
+Server
+
+```console
+cd server
+```
+```console
+npm install
+```
+```console
+npm start
+```
