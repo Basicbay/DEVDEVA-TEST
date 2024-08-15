@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import  { useState, useEffect } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import avatar from './image/avatar.png';
@@ -19,7 +19,7 @@ function EditUser() {
     useEffect(() => {
         async function fetchData() {
             const id = params.id?.toString();
-            const response = await fetch(`http://localhost:5000/user/${params.id?.toString()}`);
+            const response = await fetch(`https://user-management-az98.onrender.com/user/${params.id?.toString()}`);
             if (!response.ok) {
                 window.alert(`An error has occurred: ${response.statusText}`);
                 return;
@@ -68,7 +68,7 @@ function EditUser() {
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
-                    await fetch(`http://localhost:5000/update/${params.id}`, {
+                    await fetch(`https://user-management-az98.onrender.com/update/${params.id}`, {
                         method: "POST",
                         body: formData,
                     });
@@ -85,7 +85,7 @@ function EditUser() {
         <div className=''>
             <div className='relative flex h-20 px-10 items-center justify-between'>
                 <div className='font-medium text-xl text-slate-400'>Edit User</div>
-                <Link to={`/create`}><button className='rounded-lg  text-white px-8 py-2' style={{ background: '#008FFF' }}>Add +</button></Link>
+                <Link to={`/create`}><button className='rounded-lg  text-white px-8 py-2 bg-green-600'>Add +</button></Link>
             </div>
             <form onSubmit={handleSubmit} className=' m-auto max-w-6xl md:px-20 xl:px-0'>
                 <div className=' grid xl:grid-cols-3 gap-10 xl:gap-5  '>
@@ -93,7 +93,7 @@ function EditUser() {
                         {previewUrl ? (
                             <img className="w-44 h-44 rounded-full m-auto" src={previewUrl} alt="" />
                         ) : form.image && form.image !== 'null' ? (
-                            <img className="w-44 h-44 rounded-full m-auto" src={`http://localhost:5000/uploads/${form.image}`} alt="" />
+                            <img className="w-44 h-44 rounded-full m-auto" src={`https://user-management-az98.onrender.com/uploads/${form.image}`} alt="" />
                         ) : (
                             <img className="w-44 h-44 rounded-full m-auto" src={avatar} alt="" />
                         )}

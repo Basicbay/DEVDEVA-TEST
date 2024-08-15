@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import  { useState } from 'react';
 import { Link } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import avatar from './image/avatar.png';
@@ -24,7 +24,7 @@ function CreateUser() {
         });
 
         if (result.isConfirmed) {   // หากยืนยันกล่อง alert
-            await fetch('http://localhost:5000/user/add', {     //post แบบฟอร์มไปยัง server
+            await fetch('https://user-management-az98.onrender.com/user/add', {     //post แบบฟอร์มไปยัง server
                 method: 'POST',
                 body: formData,
             });
@@ -61,7 +61,7 @@ function CreateUser() {
             <div className="relative flex h-20 px-10 items-center justify-between">
                 <div className="font-medium text-xl text-slate-400">Create new User</div>
                 <Link to="/create">
-                    <button className="rounded-lg  text-white px-8 py-2" style={{ background: '#008FFF' }}>
+                    <button className="rounded-lg  text-white px-8 py-2 bg-green-600">
                         Add +
                     </button>
                 </Link>

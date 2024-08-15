@@ -6,7 +6,7 @@ const multer = require("multer");
 
 //กำหนดตัวแปรสำหรับการแบ่งหน้าเพจ
 const PAGE_DEFAULT = 1;
-const LIMIT_DEFAULT = 3;
+const LIMIT_DEFAULT = 6;
 
 //config หน่วยเก็บข้อมูลของ Multer
 const storage = multer.diskStorage({

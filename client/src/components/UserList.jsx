@@ -9,8 +9,8 @@ const User = ({ user, handleDeleteConfirmation }) => (
     <td className='pl-10 py-3'>
       <img
         className='rounded-full'
-        src={user.image && user.image !== 'null' ? `http://localhost:5000/uploads/${user.image}` : avatar}
-        style={{ maxWidth: '60px', maxHeight: '60px' }}
+        src={user.image && user.image !== 'null' ? `https://user-management-az98.onrender.com/uploads/${user.image}` : avatar}
+        style={{ width: '60px', height: '60px' }}
         alt={user.image ? "User Avatar" : "Default Avatar"}
       />
     </td>
@@ -39,7 +39,7 @@ function UserList() {
 
   async function getUsers() {
     try {
-      const response = await fetch(`http://localhost:5000/user/?page=${currentPage}`);
+      const response = await fetch(`https://user-management-az98.onrender.com/user/?page=${currentPage}`);
       if (!response.ok) {
         throw new Error(`An error occurred: ${response.statusText}`);
       }
@@ -53,7 +53,7 @@ function UserList() {
   //ฟังก์ชั่น fetch จำนวนผู้ใช้จาก server
   const fetchTotalUsers = async () => {
     try {
-      const response = await fetch('http://localhost:5000/totalusers');
+      const response = await fetch('https://user-management-az98.onrender.com/totalusers');
       const data = await response.json();
       setTotalUsers(data.count);
     } catch (error) {
@@ -70,7 +70,7 @@ function UserList() {
 
   //ฟังก์ชั่นลบ user 
   const deleteUser = async (id) => {
-    await fetch(`http://localhost:5000/${id}`, {
+    await fetch(`https://user-management-az98.onrender.com/${id}`, {
       method: "DELETE"
     });
     setTotalUsers(prevTotalUsers => prevTotalUsers - 1); // อัพเดทจำนวนผู้ใช้หลังจากลบผู้ใช้แล้ว
@@ -122,7 +122,7 @@ function UserList() {
       <div className='relative flex h-20 px-10 items-center justify-between'>
         <div className='font-medium text-xl text-slate-400'>User List</div>
         <Link to={`/create`}>
-          <button className='rounded-lg text-white px-8 py-2' style={{ background: '#008FFF' }}>Add +</button>
+          <button className='rounded-lg text-white px-8 py-2 bg-green-600'>Add +</button>
         </Link>
       </div>
 
