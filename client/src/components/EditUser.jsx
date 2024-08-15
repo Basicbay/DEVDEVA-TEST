@@ -19,7 +19,7 @@ function EditUser() {
     useEffect(() => {
         async function fetchData() {
             const id = params.id?.toString();
-            const response = await fetch(`https://user-management-az98.onrender.com/user/${params.id?.toString()}`);
+            const response = await fetch(`https://user-management-8uvc.onrender.com/user/${params.id?.toString()}`);
             if (!response.ok) {
                 window.alert(`An error has occurred: ${response.statusText}`);
                 return;
@@ -68,7 +68,7 @@ function EditUser() {
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
-                    await fetch(`https://user-management-az98.onrender.com/update/${params.id}`, {
+                    await fetch(`https://user-management-8uvc.onrender.com/update/${params.id}`, {
                         method: "POST",
                         body: formData,
                     });
@@ -83,7 +83,7 @@ function EditUser() {
 
     return (
         <div className=''>
-            <div className='relative flex h-20 px-10 items-center justify-between'>
+            <div className='relative flex h-24 px-5 items-center justify-between max-w-[1190px] m-auto'>
                 <div className='font-medium text-xl text-slate-400'>Edit User</div>
                 <Link to={`/create`}><button className='rounded-lg  text-white px-8 py-2 bg-green-600'>Add +</button></Link>
             </div>
@@ -93,7 +93,7 @@ function EditUser() {
                         {previewUrl ? (
                             <img className="w-44 h-44 rounded-full m-auto" src={previewUrl} alt="" />
                         ) : form.image && form.image !== 'null' ? (
-                            <img className="w-44 h-44 rounded-full m-auto" src={`https://user-management-az98.onrender.com/uploads/${form.image}`} alt="" />
+                            <img className="w-44 h-44 rounded-full m-auto" src={`https://user-management-8uvc.onrender.com/uploads/${form.image}`} alt="" />
                         ) : (
                             <img className="w-44 h-44 rounded-full m-auto" src={avatar} alt="" />
                         )}

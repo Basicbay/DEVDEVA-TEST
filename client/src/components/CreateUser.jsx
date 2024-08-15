@@ -24,7 +24,7 @@ function CreateUser() {
         });
 
         if (result.isConfirmed) {   // หากยืนยันกล่อง alert
-            await fetch('https://user-management-az98.onrender.com/user/add', {     //post แบบฟอร์มไปยัง server
+            await fetch('https://user-management-8uvc.onrender.com/user/add', {     //post แบบฟอร์มไปยัง server
                 method: 'POST',
                 body: formData,
             });
@@ -58,8 +58,8 @@ function CreateUser() {
 
     return (
         <div className="">
-            <div className="relative flex h-20 px-10 items-center justify-between">
-                <div className="font-medium text-xl text-slate-400">Create new User</div>
+            <div className="relative flex h-24 px-5 items-center justify-between max-w-[1190px] m-auto">
+                <div className="font-medium text-xl text-slate-400">Create New User</div>
                 <Link to="/create">
                     <button className="rounded-lg  text-white px-8 py-2 bg-green-600">
                         Add +
