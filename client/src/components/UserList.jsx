@@ -79,12 +79,13 @@ function UserList() {
     } catch (error) {
       console.error(error);
     }
+    setIsLoaded(true);
   };
 
   useEffect(() => {
     fetchTotalUsers(); //fetch จำนวนผู้ใช้ เมื่อหน้าปัจจุบันมีการเปลี่ยนแปลง
     getUsers(); //Fetch ข้อมูลผู้ใช้ เมื่อหน้าปัจจุบันมีการเปลี่ยนแปลง
-    setIsLoaded(true);
+
   }, [currentPage]);
 
   //ฟังก์ชั่นลบ user
