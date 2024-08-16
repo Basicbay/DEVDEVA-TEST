@@ -91,11 +91,11 @@ function EditUser() {
                 <div className=' grid xl:grid-cols-3 gap-10 xl:gap-5  '>
                     <div className='grid gap-4 text-center '>
                         {previewUrl ? (
-                            <img className="w-44 h-44 rounded-full m-auto" src={previewUrl} alt="" />
+                            <img style={{ width: "176px", height: "176px" }} className=" rounded-full m-auto w-full h-full  object-cover" src={previewUrl} alt="" />
                         ) : form.image && form.image !== 'null' ? (
-                            <img className="w-44 h-44 rounded-full m-auto" src={`https://user-management-8uvc.onrender.com/uploads/${form.image}`} alt="" />
+                            <img style={{ width: "176px", height: "176px" }} className=" rounded-full m-auto w-full h-full  object-cover" src={`https://user-management-8uvc.onrender.com/uploads/${form.image}`} alt="" />
                         ) : (
-                            <img className="w-44 h-44 rounded-full m-auto" src={avatar} alt="" />
+                            <img style={{ width: "176px", height: "176px" }} className=" rounded-full m-auto w-full h-full  object-cover" src={avatar} alt="" />
                         )}
                         <div>
                             <label htmlFor="file-upload" className="rounded-lg text-white text-sm px-5 py-2 cursor-pointer" style={{ background: '#008FFF' }}>
